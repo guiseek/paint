@@ -1,6 +1,5 @@
 :root {
-  // --border-color: #6C6E62;
-  --border-color: #A7AC9B;
+  --border-color: #a7ac9b;
   --background-color: #ebe9d8;
 }
 html,
@@ -16,6 +15,7 @@ body {
 
 footer {
   display: flex;
+  flex-direction: row-reverse;
   justify-content: space-between;
   align-items: center;
   height: 50px;
@@ -35,8 +35,8 @@ main {
 }
 
 aside {
+  padding: 10px;
   width: 60px;
-  height: 100%;
   border-color: var(--border-color);
   border-width: 0 1px 0;
   border-style: solid;

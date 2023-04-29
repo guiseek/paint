@@ -1,2 +1,2 @@
-export * from './swatch-item';
+export * from './item';
 export * from './swatch';

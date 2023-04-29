@@ -1,24 +1,33 @@
-import {Paint} from './core'
+import {PaintCanvas} from './elements'
 import './elements'
 import './style.scss'
 
-const canvas = document.querySelector('canvas')
-const colorSwatch = document.querySelector('color-swatch')
+const main = document.querySelector('main')
+const aside = document.querySelector('aside')
+const footer = document.querySelector('footer')
 
-if (canvas && colorSwatch) {
-  const setSize = () => {
-    canvas.width = window.innerWidth - 60
-    canvas.height = window.innerHeight - 50
+customElements.whenDefined('paint-canvas').then((el) => {
+  const paintCanvas = new el() as PaintCanvas
+
+  if (main) {
+    const toolBox = document.createElement('tool-box')
+    const colorSwatch = document.createElement('color-swatch')
+
+    toolBox.onselect = ({detail}) => {
+      paintCanvas.select(detail)
+    }
+
+    paintCanvas.onload = () => {
+      if (aside && footer) {
+        aside.appendChild(toolBox)
+        footer.appendChild(colorSwatch)
+
+        colorSwatch.onchange = ({detail}) => {
+          paintCanvas.setConfig({color: detail})
+        }
+      }
+    }
+
+    main.appendChild(paintCanvas)
   }
-
-  addEventListener('resize', setSize, false)
-
-  setSize()
-
-  const paint = new Paint(canvas)
-  paint.listen()
-
-  colorSwatch.onchange = ({detail}) => {
-    paint.setColor(detail)
-  }
-}
+})

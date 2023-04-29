@@ -9,30 +9,30 @@ const getStyle = (color: string | null = '#ffffff') => {
 			--color: ${color};
 			display: block;
 			position: relative;
-			width: 16px;
-			height: 16px;
+			width: 24px;
+			height: 24px;
 			background: #000000;
-			box-shadow: inset -1px -1px 0px rgba(255, 255, 255, 0.33), inset 1px 1px 0px rgba(255, 255, 255, 0.33);
+			box-shadow: inset -2px -2px 0px rgba(255, 255, 255, 0.33), inset 2px 2px 0px rgba(255, 255, 255, 0.33);
 			cursor: pointer;
 		}
 		:host > div {
-			width: 14px;
-			height: 14px;
+			width: 22px;
+			height: 22px;
 			box-sizing: border-box;
 			background: var(--color);
 			
 		}
 		:host-context([aria-selected="true"]) > div {
 			/* Color/Border/Inner */
-			border-width: 1px 0px 0px 1px;
+			border-width: 2px 0px 0px 2px;
 			border-style: solid;
-			border-color: #111111;
+			border-color: rgba(17, 17, 17, 0.66);
 		}
 	`
   return style
 }
 
-export class ColorSwatchItem extends HTMLElement {
+export class ColorItem extends HTMLElement {
   static observedAttributes = ['value']
 
   private _value = '#ffffff'
@@ -65,14 +65,14 @@ export class ColorSwatchItem extends HTMLElement {
     if (name === 'value' && next !== prev) this.value = next
   }
 }
-customElements.define('color-swatch-item', ColorSwatchItem)
+customElements.define('color-item', ColorItem)
 
 declare global {
   interface EventTarget {
     onchange: ((ev: CustomEvent<string>) => any) | null
   }
   interface HTMLElementTagNameMap {
-    'color-swatch-item': ColorSwatchItem
+    'color-item': ColorItem
   }
   interface HTMLElementEventMap {
     change: CustomEvent<string>

@@ -1,13 +1,13 @@
 const template = document.createElement('template')
 template.innerHTML = `
-	<color-swatch-item value="black" aria-selected="true"></color-swatch-item>
-	<color-swatch-item value="white" aria-selected="false"></color-swatch-item>
-	<color-swatch-item value="red" aria-selected="false"></color-swatch-item>
-	<color-swatch-item value="yellow" aria-selected="false"></color-swatch-item>
-	<color-swatch-item value="green" aria-selected="false"></color-swatch-item>
-	<color-swatch-item value="cyan" aria-selected="false"></color-swatch-item>
-	<color-swatch-item value="blue" aria-selected="false"></color-swatch-item>
-	<color-swatch-item value="hotpink" aria-selected="false"></color-swatch-item>
+	<color-item value="black" aria-selected="true"></color-item>
+	<color-item value="white" aria-selected="false"></color-item>
+	<color-item value="red" aria-selected="false"></color-item>
+	<color-item value="yellow" aria-selected="false"></color-item>
+	<color-item value="green" aria-selected="false"></color-item>
+	<color-item value="cyan" aria-selected="false"></color-item>
+	<color-item value="blue" aria-selected="false"></color-item>
+	<color-item value="hotpink" aria-selected="false"></color-item>
 `
 const getStyle = (color: string | null = '#ffffff') => {
   const style = document.createElement('style')
@@ -40,24 +40,14 @@ export class ColorSwatch extends HTMLElement {
     shadow.appendChild(getStyle(this.value))
     shadow.appendChild(template.content.cloneNode(true))
 
-    const items = shadow.querySelectorAll('color-swatch-item')
-    items.forEach((item) => {
-      item.onchange = ({detail}) => {
-        this.change(detail)
-        this.unSelectItems()
-        item.toggleSelected()
+    const colors = shadow.querySelectorAll('color-item')
+    colors.forEach((color) => {
+      color.onchange = ({detail}) => {
+        this.value = detail
+        colors.forEach((c) => (c.ariaSelected = 'false'))
+        this.dispatchEvent(new CustomEvent('change', {detail}))
+        color.toggleSelected()
       }
-    })
-  }
-
-  change(detail: string) {
-    this.value = detail
-    this.dispatchEvent(new CustomEvent('change', {detail}))
-  }
-
-  unSelectItems() {
-    this.shadowRoot?.querySelectorAll('color-swatch-item').forEach((item) => {
-      item.ariaSelected = 'false'
     })
   }
 
