@@ -1,10 +1,11 @@
 import {ToolBase} from './base'
 
-export class ToolBrush extends ToolBase<BrushConfig> {
-  #current = {
+export class ToolArc extends ToolBase<ArcConfig> {
+  #center = {
     x: 0,
     y: 0,
   }
+  #radius = 0
 
   protected config: BrushConfig = {
     color: 'black',
@@ -44,11 +45,14 @@ export class ToolBrush extends ToolBase<BrushConfig> {
   #onDown = (e: MouseEvent | TouchEvent) => {
     this.drawing = true
 
+    this.context.save()
+
     const {clientX = 0, clientY = 0} =
       e instanceof TouchEvent ? e.changedTouches[0] : e
 
-    this.#current.x = clientX
-    this.#current.y = clientY
+    this.#center.x = clientX - this.context.canvas.offsetLeft
+
+    this.#center.y = clientY - this.context.canvas.offsetTop
   }
 
   #onMove = (e: MouseEvent | TouchEvent) => {
@@ -56,13 +60,39 @@ export class ToolBrush extends ToolBase<BrushConfig> {
       return
     }
 
+    const {canvas} = this.context
+
     const {clientX = 0, clientY = 0} =
       e instanceof TouchEvent ? e.changedTouches[0] : e
 
-    this.#drawLine(clientX, clientY, true)
+    const mouseX = clientX - canvas.offsetLeft
+    const mouseY = clientY - canvas.offsetTop
 
-    this.#current.x = clientX
-    this.#current.y = clientY
+    this.#radius = Math.sqrt(
+      Math.pow(mouseX - this.#center.x, 2) +
+        Math.pow(mouseY - this.#center.y, 2)
+    )
+
+    this.context.clearRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height,
+    )
+
+    this.context.lineWidth = this.config.stroke
+    this.context.strokeStyle = this.config.color
+    this.context.fillStyle = 'white'
+
+    this.context.beginPath()
+    this.context.arc(
+      this.#center.x,
+      this.#center.y,
+      this.#radius,
+      0,
+      2 * Math.PI
+    )
+    this.context.stroke()
   }
 
   #onUp = (e: MouseEvent | TouchEvent) => {
@@ -75,25 +105,24 @@ export class ToolBrush extends ToolBase<BrushConfig> {
     const {clientX = 0, clientY = 0} =
       e instanceof TouchEvent ? e.changedTouches[0] : e
 
-    this.#drawLine(clientX, clientY)
-  }
+    const mouseX = clientX - this.context.canvas.offsetLeft
+    const mouseY = clientY - this.context.canvas.offsetTop
 
-  draw(shape: Shape) {
-    
-  }
+    this.#radius = Math.sqrt(
+      Math.pow(mouseX - this.#center.x, 2) +
+        Math.pow(mouseY - this.#center.y, 2)
+    )
 
-  #drawLine(clientX: number, clientY: number, emit?: boolean) {
-    const {x, y} = this.#current
     this.context.beginPath()
-    this.context.moveTo(x - 60, y)
-    this.context.lineTo(clientX - 60, clientY)
-    this.context.lineWidth = this.config.stroke
-    this.context.strokeStyle = this.config.color
+    this.context.arc(
+      this.#center.x,
+      this.#center.y,
+      this.#radius,
+      0,
+      2 * Math.PI
+    )
     this.context.stroke()
-    this.context.closePath()
 
-    if (!emit) {
-      return
-    }
+    this.context.restore()
   }
 }

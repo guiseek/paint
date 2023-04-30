@@ -1,3 +1,4 @@
+export * from './arc';
 export * from './base';
 export * from './box';
 export * from './brush';

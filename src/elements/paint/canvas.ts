@@ -1,4 +1,4 @@
-import {ToolBase, ToolBrush, ToolRect} from '../tool'
+import {ToolArc, ToolBase, ToolBrush, ToolRect} from '../tool'
 
 export class PaintCanvas extends HTMLCanvasElement {
   #tools!: Record<Tool, ToolBase>
@@ -10,12 +10,18 @@ export class PaintCanvas extends HTMLCanvasElement {
 
     const context = this.getContext('2d')
     if (context) {
-      this.#tools = {
-        brush: new ToolBrush(context),
-        fill: new ToolBrush(context),
-        rect: new ToolRect(context),
+      const brush = new ToolBrush(context)
+      const rect = new ToolRect(context)
+      rect.onstart = (shape) => {
+        
       }
-      
+      this.#tools = {
+        brush,
+        fill: new ToolBrush(context),
+        rect,
+        arc: new ToolArc(context),
+      }
+
       this.dispatchEvent(new CustomEvent('load'))
     }
 

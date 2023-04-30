@@ -11,6 +11,9 @@ template.innerHTML = `
   <button is="tool-button" value="rect">
     <span is="tool-symbol">rectangle</span>
   </button>
+  <button is="tool-button" value="arc">
+    <span is="tool-symbol">circle</span>
+  </button>
 `
 const getStyle = () => {
   const style = document.createElement('style')

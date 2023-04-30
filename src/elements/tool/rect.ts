@@ -49,35 +49,53 @@ export class ToolRect extends ToolBase<RectConfig> {
   #onDown = (e: MouseEvent | TouchEvent) => {
     this.drawing = true
 
+    this.context.save()
+
+    const {canvas} = this.context
+
     const {clientX = 0, clientY = 0} =
       e instanceof TouchEvent ? e.changedTouches[0] : e
 
-    this.#start.x = clientX - this.context.canvas.offsetLeft
+    this.#start.x = clientX - canvas.offsetLeft
 
-    this.#start.y = clientY - this.context.canvas.offsetTop
+    this.#start.y = clientY - canvas.offsetTop
+
+    const rect: Shape = {
+      ...this.#start,
+      width: 0,
+      height: 0,
+      strokeStyle: 'black',
+      fillStyle: 'white',
+      lineWidth: 2,
+      type: 'rect',
+    }
+
+    this.shapes.push(rect)
   }
 
   #onMove = (e: MouseEvent | TouchEvent) => {
     if (!this.drawing) {
       return
     }
+    const {canvas} = this.context
 
     const {clientX = 0, clientY = 0} =
       e instanceof TouchEvent ? e.changedTouches[0] : e
 
-    this.#end.x = clientX - this.context.canvas.offsetLeft
-    this.#end.y = clientY - this.context.canvas.offsetTop
+    this.#end.x = clientX - canvas.offsetLeft
+    this.#end.y = clientY - canvas.offsetTop
 
-    this.context.clearRect(
-      0,
-      0,
-      this.context.canvas.width,
-      this.context.canvas.height
-    )
+    this.context.clearRect(0, 0, canvas.width, canvas.height)
+    // this.context.clearRect(
+    //   this.#start.x,
+    //   this.#start.y,
+    //   this.#end.x - this.#start.x,
+    //   this.#end.y - this.#start.y
+    // )
 
     this.context.lineWidth = this.config.stroke
     this.context.strokeStyle = this.config.color
-    this.context.fillStyle = 'white'
+    this.context.fillStyle = 'transparent'
 
     this.context.strokeRect(
       this.#start.x,
@@ -106,5 +124,12 @@ export class ToolRect extends ToolBase<RectConfig> {
       this.#end.x - this.#start.x,
       this.#end.y - this.#start.y
     )
+
+    this.context.restore()
+  }
+
+
+  draw(shape: Shape) {
+    
   }
 }
